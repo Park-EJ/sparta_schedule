@@ -46,12 +46,10 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
         StringBuilder sql = new StringBuilder("SELECT * FROM schedule WHERE 1 = 1");
         List<Object> params = new ArrayList<>();
 
-
         if (updatedAt != null && !updatedAt.isEmpty()) {
             sql.append(" AND DATE(updatedAt) = ?");
             params.add(LocalDate.parse(updatedAt));
         }
-
 
         if (name != null && !name.isEmpty()) {
             sql.append(" AND name = ?");
@@ -114,8 +112,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
                         rs.getString("title"),
                         rs.getString("contents"),
                         rs.getTimestamp("createdAt").toLocalDateTime(),
-                        rs.getTimestamp("updatedAt").toLocalDateTime()),
-//                        rs.getTimestamp("updatedAt") != null ? rs.getTimestamp("updatedAt").toLocalDateTime() : null
+                        rs.getTimestamp("updatedAt") != null ? rs.getTimestamp("updatedAt").toLocalDateTime() : null),
                 id
         );
     }
