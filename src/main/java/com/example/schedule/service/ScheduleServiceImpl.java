@@ -30,7 +30,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Transactional
     @Override
     public List<ScheduleResponseDto> findAll(String updatedAt, String name) {
-        return scheduleRepository.findAll(updatedAt, name).stream()
+        List<ScheduleResponseDto> schedules = scheduleRepository.findAll(updatedAt, name).stream()
                 .map(schedule -> new ScheduleResponseDto(
                         schedule.getId(),
                         schedule.getName(),
@@ -40,13 +40,19 @@ public class ScheduleServiceImpl implements ScheduleService {
                         schedule.getUpdatedAt()
                 ))
                 .collect(Collectors.toList());
+
+        if (schedules.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다.");
+        }
+
+        return schedules;
     }
 
     @Transactional
     @Override
     public ScheduleResponseDto findById(Long id) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 일정이 존재하지 않습니다.")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다.")
         );
 
         return new ScheduleResponseDto(schedule);
@@ -56,7 +62,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDto update(Long id, String name, String password, String title, String contents) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 일정이 존재하지 않습니다.")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다.")
         );
 
         if (!schedule.getPassword().equals(password)) {
@@ -72,7 +78,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void delete(Long id, String password) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 일정이 존재하지 않습니다.")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 일정이 존재하지 않습니다.")
         );
 
         if (!schedule.getPassword().equals(password)) {
@@ -80,7 +86,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         scheduleRepository.delete(schedule);
-
     }
 
 }
