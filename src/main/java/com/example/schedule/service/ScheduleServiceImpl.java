@@ -27,7 +27,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<ScheduleResponseDto> findAll(String updatedAt, String name) {
         List<ScheduleResponseDto> schedules = scheduleRepository.findAll(updatedAt, name).stream()
@@ -48,7 +48,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return schedules;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ScheduleResponseDto findById(Long id) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
